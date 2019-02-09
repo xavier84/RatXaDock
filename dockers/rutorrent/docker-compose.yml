@@ -1,0 +1,32 @@
+
+#startrutorrent
+  rutorrent-@USERNAME@:
+    container_name: rutorrent-@USERNAME@
+    image: xataz/rtorrent-rutorrent:filebot
+    restart: unless-stopped
+    hostname: torrent
+    labels:
+      - traefik.enable=true
+      - traefik.frontend.rule=Host:@RUTORRENT_FQDN@
+      - traefik.port=8080
+      - traefik.docker.network=@PROXY_NETWORK@
+      - traefik.frontend.auth.basic=@MDP@
+    environment:
+      - FILEBOT_RENAME_METHOD=copy
+      - FILEBOT_RENAME_MOVIES={n} ({y})/{n} ({y})
+      - FILEBOT_RENAME_SERIES={n}/Saison {s}/{n} - {s00e00} - {t}
+      - UID=@PUID@
+      - GID=@PGID@
+      - DHT_RTORRENT=on
+      - PORT_RTORRENT=@PORT@
+    ports:
+      - @PORT@:@PORT@
+    volumes:
+      - @SHOME@/rutorrent/downloads:/data/torrents
+      - @SHOME@/Medias:/data/Media
+      - @SHOME@/docker/rutorrent/data:/data
+      - @SHOME@/docker/rutorrent/config:/config
+    networks:
+      - torrent
+      - proxy
+#endrutorrent

@@ -1,0 +1,26 @@
+
+#startplex
+  plex:
+    container_name: plex
+    image: plexinc/pms-docker
+    restart: unless-stopped
+    hostname: plex
+    labels:
+      - traefik.enable=true
+      - traefik.frontend.rule=Host:@PLEX_FQDN@
+      - traefik.port=32400
+      - traefik.docker.network=traefik_proxy
+    environment:
+      - TZ=Europe/Paris
+      - PLEX_CLAIM=@CLAIM@
+      - PLEX_UID=0
+      - PLEX_GID=0
+    ports:
+      - 32400:32400
+    volumes:
+      - /opt/seedbox/conf/admin/plex:/config
+      - /opt/seedbox/conf/admin/plex/transcode:/transcode
+      - /home:/home
+    networks:
+      - proxy
+#endplex
